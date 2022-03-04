@@ -7,7 +7,8 @@
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
     "create-local": "graph create excaliburlocal --node http://subgraph.beta.excalibur.exchange:8020",
-    "deploy-local": "graph deploy excaliburlocal --debug --ipfs http://localhost:5001 --node http://subgraph.beta.excalibur.exchange:8020",
+    "deploy-local": "graph deploy excaliburlocal --debug --ipfs http://subgraph.beta.excalibur.exchange:5001 --node http://subgraph.beta.excalibur.exchange:8020",
+    "deploy-fantom": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ --product hosted-service excaliburexchange/excalibur",
     "deploy": "graph deploy ianlapham/uniswap-v2-rinkeby --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
     "deploy-staging": "graph deploy $THE_GRAPH_GITHUB_USER/$THE_GRAPH_SUBGRAPH_NAME /Uniswap --ipfs https://api.staging.thegraph.com/ipfs/ --node https://api.staging.thegraph.com/deploy/",
     "watch-local": "graph deploy excaliburlocal --watch --debug --node http://subgraph.beta.excalibur.exchange:8020/ --ipfs http://subgraph.beta.excalibur.exchange:5001"

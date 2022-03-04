@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: mainnet
+    network: fantom
     source:
-      address: '0xc1Ef0c09481EC0DfA016798a66e1074Aa10bd3C2'
+      address: '0x08b3CCa975a82cFA6f912E0eeDdE53A629770D3f'
       abi: Factory
-      startBlock: 6847844
+      startBlock: 32488636
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -34,7 +34,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pair
-    network: mainnet
+    network: fantom
     source:
       abi: Pair
     mapping:
