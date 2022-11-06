@@ -1,7 +1,4 @@
-import {
-  Address,
-  BigInt,
-} from "@graphprotocol/graph-ts"
+import {Address, BigInt,} from "@graphprotocol/graph-ts"
 
 // Initialize a Token Definition with the attributes
 export class TokenDefinition {
@@ -20,19 +17,7 @@ export class TokenDefinition {
 
   // Get all tokens with a static defintion
   static getStaticDefinitions(): Array<TokenDefinition> {
-    let staticDefinitions = new Array<TokenDefinition>(0)
-
-
-    // Add HPB
-//     let tokenHPB = new TokenDefinition(
-//       Address.fromString('0x38c6a68304cdefb9bec48bbfaaba5c5b47818bb2'),
-//       'HPB',
-//       'HPBCoin',
-//       BigInt.fromI32(18)
-//     )
-//     staticDefinitions.push(tokenHPB)
-
-    return staticDefinitions
+    return new Array<TokenDefinition>(0)
   }
 
   // Helper for hardcoded tokens

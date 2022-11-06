@@ -8,7 +8,7 @@ import { Factory as FactoryContract } from '../types/templates/Pair/Factory'
 import { TokenDefinition } from './tokenDefinition'
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
-export const FACTORY_ADDRESS = '0x08b3cca975a82cfa6f912e0eedde53a629770d3f' // TODO: update address
+export const FACTORY_ADDRESS = '0x6EcCab422D763aC031210895C81787E87B43A652' // TODO: update address
 
 export let ZERO_BI = BigInt.fromI32(0)
 export let ONE_BI = BigInt.fromI32(1)
@@ -16,11 +16,11 @@ export let ZERO_BD = BigDecimal.fromString('0')
 export let ONE_BD = BigDecimal.fromString('1')
 export let BI_18 = BigInt.fromI32(18)
 
-export let BD_PAIR_DEFAULT_FEE_AMOUNT = BigDecimal.fromString('0.15')
+export let BD_PAIR_DEFAULT_FEE_AMOUNT = BigDecimal.fromString('0.3')
 
 export let factoryContract = FactoryContract.bind(Address.fromString(FACTORY_ADDRESS))
 
-// rebass tokens, dont count in tracked volume
+// rebass tokens, d'ont count in tracked volume
 export let UNTRACKED_PAIRS: string[] = ['']
 
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
@@ -49,10 +49,7 @@ export function convertTokenToDecimal(tokenAmount: BigInt, exchangeDecimals: Big
 export function equalToZero(value: BigDecimal): boolean {
   const formattedVal = parseFloat(value.toString())
   const zero = parseFloat(ZERO_BD.toString())
-  if (zero == formattedVal) {
-    return true
-  }
-  return false
+  return zero == formattedVal;
 }
 
 export function isNullEthValue(value: string): boolean {
@@ -158,7 +155,6 @@ export function createLiquidityPosition(exchange: Address, user: Address): Liqui
     liquidityTokenBalance.save()
     pair.save()
   }
-  if (liquidityTokenBalance === null) log.error('LiquidityTokenBalance is null', [id])
   return liquidityTokenBalance as LiquidityPosition
 }
 

@@ -1,17 +1,17 @@
 {
-  "name": "excalibur-subgraph",
+  "name": "camelot-subgraph",
   "version": "1.0.0",
-  "repository": "https://github.com/ExcaliburExchange/v2-subgraph",
+  "repository": "https://github.com/CamelotLabs/v2-subgraph",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "create-local": "graph create excaliburlocal --node http://subgraph.beta.excalibur.exchange:8020",
-    "deploy-local": "graph deploy excaliburlocal --debug --ipfs http://subgraph.beta.excalibur.exchange:5001 --node http://subgraph.beta.excalibur.exchange:8020",
-    "deploy-fantom": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ --product hosted-service excaliburexchange/excalibur",
-    "deploy": "graph deploy ianlapham/uniswap-v2-rinkeby --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/ --debug",
+    "create-local": "graph create camelotlocal --node http://subgraph.beta.excalibur.exchange:8020",
+    "deploy-local": "graph deploy camelotlocal --debug --ipfs http://subgraph.beta.excalibur.exchange:5001 --node http://subgraph.beta.excalibur.exchange:8020",
+    "deploy-arbitrum": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ --product hosted-service camelotlabs/camelot-amm",
+    "deploy-arbitrum-testnet": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ --product hosted-service camelotlabs/camelot-testnet-amm",
     "deploy-staging": "graph deploy $THE_GRAPH_GITHUB_USER/$THE_GRAPH_SUBGRAPH_NAME /Uniswap --ipfs https://api.staging.thegraph.com/ipfs/ --node https://api.staging.thegraph.com/deploy/",
-    "watch-local": "graph deploy excaliburlocal --watch --debug --node http://subgraph.beta.excalibur.exchange:8020/ --ipfs http://subgraph.beta.excalibur.exchange:5001"
+    "watch-local": "graph deploy camelotlocal --watch --debug --node http://subgraph.beta.camelot.exchange:8020/ --ipfs http://subgraph.beta.excalibur.exchange:5001"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.16.0",

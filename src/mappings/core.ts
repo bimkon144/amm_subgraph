@@ -10,7 +10,7 @@ import {
   Swap as SwapEvent,
   Bundle
 } from '../types/schema'
-import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync, FeeAmountUpdated } from '../types/templates/Pair/Pair'
+import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync, FeePercentUpdated } from '../types/templates/Pair/Pair'
 import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData } from './dayUpdates'
 import { getEthPriceInUSD, findEthPerToken, getTrackedVolumeUSD, getTrackedLiquidityUSD } from './pricing'
 import {
@@ -415,6 +415,11 @@ export function handleSwap(event: Swap): void {
     .div(BigDecimal.fromString('2'))
   let derivedAmountUSD = derivedAmountETH.times(bundle.ethPrice)
 
+  // get total swap fee of derived USD and ETH for tracking
+  let feeAmountETH = token1.derivedETH.times(amount1In).times(pair.token0FeePercent)
+      .plus(token0.derivedETH.times(amount0In).times(pair.token0FeePercent)).div(BigDecimal.fromString('100'))
+  let feeAmountUSD = feeAmountETH.times(bundle.ethPrice)
+
   // only accounts for volume through white listed tokens
   let trackedAmountUSD = getTrackedVolumeUSD(amount0Total, token0 as Token, amount1Total, token1 as Token, pair as Pair)
 
@@ -512,6 +517,8 @@ export function handleSwap(event: Swap): void {
   // swap specific updating
   uniswapDayData.dailyVolumeUSD = uniswapDayData.dailyVolumeUSD.plus(trackedAmountUSD)
   uniswapDayData.dailyVolumeETH = uniswapDayData.dailyVolumeETH.plus(trackedAmountETH)
+  uniswapDayData.dailyFeeETH = uniswapDayData.dailyFeeETH.plus(feeAmountETH)
+  uniswapDayData.dailyFeeUSD = uniswapDayData.dailyFeeUSD.plus(feeAmountUSD)
   uniswapDayData.dailyVolumeUntracked = uniswapDayData.dailyVolumeUntracked.plus(derivedAmountUSD)
   uniswapDayData.save()
 
@@ -519,6 +526,7 @@ export function handleSwap(event: Swap): void {
   pairDayData.dailyVolumeToken0 = pairDayData.dailyVolumeToken0.plus(amount0Total)
   pairDayData.dailyVolumeToken1 = pairDayData.dailyVolumeToken1.plus(amount1Total)
   pairDayData.dailyVolumeUSD = pairDayData.dailyVolumeUSD.plus(trackedAmountUSD)
+  pairDayData.dailyFeeUSD = pairDayData.dailyFeeUSD.plus(feeAmountUSD)
   pairDayData.save()
 
   // update hourly pair data
@@ -544,8 +552,11 @@ export function handleSwap(event: Swap): void {
   token1DayData.save()
 }
 
-export function handleFeeAmountUpdated(event: FeeAmountUpdated): void {
+export function handleFeePercentUpdated(event: FeePercentUpdated): void {
   let pair = Pair.load(event.address.toHexString())
-  pair.feeAmount = event.params.feeAmount.toBigDecimal() / BigDecimal.fromString('1000')
+  // @ts-ignore
+  pair.token0FeePercent = (event.params.token0FeePercent as BigDecimal) / BigDecimal.fromString('1000')
+  // @ts-ignore
+  pair.token1FeePercent = (event.params.token1FeePercent as BigDecimal)  / BigDecimal.fromString('1000')
   pair.save()
 }

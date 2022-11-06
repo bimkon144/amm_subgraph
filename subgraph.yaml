@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: fantom
+    network: arbitrum-one
     source:
-      address: '0x08b3CCa975a82cFA6f912E0eeDdE53A629770D3f'
+      address: '0x6EcCab422D763aC031210895C81787E87B43A652'
       abi: Factory
-      startBlock: 32488636
+      startBlock: 33636404
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -21,7 +21,7 @@ dataSources:
         - Token
       abis:
         - name: Factory
-          file: ./abis/excaliburFactory.json
+          file: ./abis/camelotfactory.json
         - name: ERC20
           file: ./abis/ERC20.json
         - name: ERC20SymbolBytes
@@ -34,7 +34,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pair
-    network: fantom
+    network: arbitrum-one
     source:
       abi: Pair
     mapping:
@@ -47,9 +47,9 @@ templates:
         - Token
       abis:
         - name: Pair
-          file: ./abis/excaliburPair.json
+          file: ./abis/camelotpair.json
         - name: Factory
-          file: ./abis/excaliburFactory.json
+          file: ./abis/camelotfactory.json
       eventHandlers:
         - event: Mint(indexed address,uint256,uint256)
           handler: handleMint
@@ -61,5 +61,5 @@ templates:
           handler: handleTransfer
         - event: Sync(uint112,uint112)
           handler: handleSync
-        - event: FeeAmountUpdated(uint256,uint256)
-          handler: handleFeeAmountUpdated
+        - event: FeePercentUpdated(uint16,uint16)
+          handler: handleFeePercentUpdated

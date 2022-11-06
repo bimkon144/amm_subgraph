@@ -64,7 +64,8 @@ type Pair @entity {
   reserve0: BigDecimal!
   reserve1: BigDecimal!
   totalSupply: BigDecimal!
-  feeAmount: BigDecimal!
+  token0FeePercent: BigDecimal!
+  token1FeePercent: BigDecimal!
 
   # derived liquidity
   reserveETH: BigDecimal!
@@ -226,6 +227,9 @@ type UniswapDayData @entity {
   dailyVolumeUSD: BigDecimal!
   dailyVolumeUntracked: BigDecimal!
 
+  dailyFeeETH: BigDecimal!
+  dailyFeeUSD: BigDecimal!
+
   totalVolumeETH: BigDecimal!
   totalLiquidityETH: BigDecimal!
   totalVolumeUSD: BigDecimal! # Accumulate at each trade, not just calculated off whatever totalVolume is. making it more accurate as it is a live conversion
@@ -253,6 +257,7 @@ type PairHourData @entity {
   hourlyVolumeToken0: BigDecimal!
   hourlyVolumeToken1: BigDecimal!
   hourlyVolumeUSD: BigDecimal!
+  hourlyFeeUSD: BigDecimal!
   hourlyTxns: BigInt!
 }
 
@@ -278,6 +283,7 @@ type PairDayData @entity {
   dailyVolumeToken0: BigDecimal!
   dailyVolumeToken1: BigDecimal!
   dailyVolumeUSD: BigDecimal!
+  dailyFeeUSD: BigDecimal!
   dailyTxns: BigInt!
 }
 
