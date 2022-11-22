@@ -25,6 +25,8 @@ export function handleNewPair(event: PairCreated): void {
     factory.totalVolumeUSD = ZERO_BD
     factory.untrackedVolumeUSD = ZERO_BD
     factory.totalLiquidityUSD = ZERO_BD
+    factory.totalFeeUSD = ZERO_BD
+    factory.totalFeeETH = ZERO_BD
     factory.txCount = ZERO_BI
 
     // create new bundle
@@ -106,6 +108,8 @@ export function handleNewPair(event: PairCreated): void {
   pair.token1Price = ZERO_BD
   pair.token0FeePercent = BD_PAIR_DEFAULT_FEE_AMOUNT
   pair.token1FeePercent = BD_PAIR_DEFAULT_FEE_AMOUNT
+  pair.feeUSD = ZERO_BD
+  pair.isStable = false
 
   // create the tracked contract based on the template
   PairTemplate.create(event.params.pair)

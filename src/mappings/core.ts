@@ -10,7 +10,16 @@ import {
   Swap as SwapEvent,
   Bundle
 } from '../types/schema'
-import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync, FeePercentUpdated } from '../types/templates/Pair/Pair'
+import {
+  Pair as PairContract,
+  Mint,
+  Burn,
+  Swap,
+  Transfer,
+  Sync,
+  FeePercentUpdated,
+  SetStableSwap
+} from '../types/templates/Pair/Pair'
 import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData } from './dayUpdates'
 import { getEthPriceInUSD, findEthPerToken, getTrackedVolumeUSD, getTrackedLiquidityUSD } from './pricing'
 import {
@@ -416,7 +425,7 @@ export function handleSwap(event: Swap): void {
   let derivedAmountUSD = derivedAmountETH.times(bundle.ethPrice)
 
   // get total swap fee of derived USD and ETH for tracking
-  let feeAmountETH = token1.derivedETH.times(amount1In).times(pair.token0FeePercent)
+  let feeAmountETH = token1.derivedETH.times(amount1In).times(pair.token1FeePercent)
       .plus(token0.derivedETH.times(amount0In).times(pair.token0FeePercent)).div(BigDecimal.fromString('100'))
   let feeAmountUSD = feeAmountETH.times(bundle.ethPrice)
 
@@ -446,6 +455,7 @@ export function handleSwap(event: Swap): void {
 
   // update pair volume data, use tracked amount if we have it as its probably more accurate
   pair.volumeUSD = pair.volumeUSD.plus(trackedAmountUSD)
+  pair.feeUSD = pair.feeUSD.plus(feeAmountUSD)
   pair.volumeToken0 = pair.volumeToken0.plus(amount0Total)
   pair.volumeToken1 = pair.volumeToken1.plus(amount1Total)
   pair.untrackedVolumeUSD = pair.untrackedVolumeUSD.plus(derivedAmountUSD)
@@ -457,6 +467,8 @@ export function handleSwap(event: Swap): void {
   uniswap.totalVolumeUSD = uniswap.totalVolumeUSD.plus(trackedAmountUSD)
   uniswap.totalVolumeETH = uniswap.totalVolumeETH.plus(trackedAmountETH)
   uniswap.untrackedVolumeUSD = uniswap.untrackedVolumeUSD.plus(derivedAmountUSD)
+  uniswap.totalFeeUSD = uniswap.totalFeeUSD.plus(feeAmountUSD)
+  uniswap.totalFeeETH = uniswap.totalFeeETH.plus(feeAmountETH)
   uniswap.txCount = uniswap.txCount.plus(ONE_BI)
 
   // save entities
@@ -552,11 +564,16 @@ export function handleSwap(event: Swap): void {
   token1DayData.save()
 }
 
+export function handleTypeSwitch(event: SetStableSwap): void {
+  let pair = Pair.load(event.address.toHexString())
+  pair.isStable = event.params.stableSwap
+  pair.save()
+}
+
 export function handleFeePercentUpdated(event: FeePercentUpdated): void {
   let pair = Pair.load(event.address.toHexString())
-  // @ts-ignore
-  pair.token0FeePercent = (event.params.token0FeePercent as BigDecimal) / BigDecimal.fromString('1000')
-  // @ts-ignore
-  pair.token1FeePercent = (event.params.token1FeePercent as BigDecimal)  / BigDecimal.fromString('1000')
+
+  pair.token0FeePercent = BigInt.fromI32(event.params.token0FeePercent).toBigDecimal().div(BigDecimal.fromString('1000'))
+  pair.token1FeePercent = BigInt.fromI32(event.params.token1FeePercent).toBigDecimal().div(BigDecimal.fromString('1000'))
   pair.save()
 }

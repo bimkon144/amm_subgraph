@@ -9,6 +9,10 @@ type UniswapFactory @entity {
   totalVolumeUSD: BigDecimal!
   totalVolumeETH: BigDecimal!
 
+  # total fees
+  totalFeeUSD: BigDecimal!
+  totalFeeETH: BigDecimal!
+
   # untracked values - less confident USD scores
   untrackedVolumeUSD: BigDecimal!
 
@@ -57,6 +61,7 @@ type Token @entity {
 type Pair @entity {
   # pair address
   id: ID!
+  isStable: Boolean
 
   # mirrored from the smart contract
   token0: Token!
@@ -81,6 +86,7 @@ type Pair @entity {
   volumeToken0: BigDecimal!
   volumeToken1: BigDecimal!
   volumeUSD: BigDecimal!
+  feeUSD: BigDecimal!
   untrackedVolumeUSD: BigDecimal!
   txCount: BigInt!
 
