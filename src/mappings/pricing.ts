@@ -22,21 +22,21 @@ export function getEthPriceInUSD(): BigDecimal {
 let WHITELIST: string[] = [
 // TODO: update address
   '0x82af49447d8a07e3bd95bd0d56f35241523fbab1', // WETH
-  '0x1a5b0aaf478bf1fda7b934c76e7692d722982a6d', // BFR
+  // '0x1a5b0aaf478bf1fda7b934c76e7692d722982a6d', // BFR
   '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', // DAI
-  '0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a', // GMX
-  '0x8d9ba570d6cb60c7e3e0f31343efe75ab8e65fb1', // gOHM
-  '0x10393c20975cf177a3513071bc110f7962cd67da', // JONES
-  '0xfea7a6a0b346362bf88a9e4a88416b77a57d6c2a', // MIM
-  '0x51318b7d00db7acc4026c88c3952b66278b6a67f', // PLS
-  '0x51fc0f6660482ea73330e414efd7808811a57fa2', // PREMIA
-  '0x5575552988a3a80504bbaeb1311674fcfd40ad4b', // SPA
-  '0x3e6648c5a70a150a88bce65f4ad4d506fe15d2af', // SPELL
+  // '0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a', // GMX
+  // '0x8d9ba570d6cb60c7e3e0f31343efe75ab8e65fb1', // gOHM
+  // '0x10393c20975cf177a3513071bc110f7962cd67da', // JONES
+  // '0xfea7a6a0b346362bf88a9e4a88416b77a57d6c2a', // MIM
+  // '0x51318b7d00db7acc4026c88c3952b66278b6a67f', // PLS
+  // '0x51fc0f6660482ea73330e414efd7808811a57fa2', // PREMIA
+  // '0x5575552988a3a80504bbaeb1311674fcfd40ad4b', // SPA
+  // '0x3e6648c5a70a150a88bce65f4ad4d506fe15d2af', // SPELL
   '0x1622bf67e6e5747b81866fe0b85178a93c7f86e3', // UMAMI
   '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', // USDC
   '0xd74f5255d557944cf7dd0e45ff521520002d5748', // USDs
   '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', // USDT
-  '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f', // WBTC
+  // '0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f', // WBTC
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps

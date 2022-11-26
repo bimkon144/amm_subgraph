@@ -23,10 +23,28 @@ export let factoryContract = FactoryContract.bind(Address.fromString(FACTORY_ADD
 // rebass tokens, d'ont count in tracked volume
 export let UNTRACKED_PAIRS: string[] = ['']
 
+
+export function convertDecimalsToEth(value: BigDecimal, decimals: BigInt): BigDecimal {
+  let bd = BigDecimal.fromString('1')
+  for (let i = ZERO_BI; i.lt(decimals as BigInt); i = i.plus(ONE_BI)) {
+    bd = bd.times(BigDecimal.fromString('10'))
+  }
+  return bd
+}
+
 export function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   let bd = BigDecimal.fromString('1')
   for (let i = ZERO_BI; i.lt(decimals as BigInt); i = i.plus(ONE_BI)) {
     bd = bd.times(BigDecimal.fromString('10'))
+  }
+  return bd
+}
+
+
+export function exponentToBigInt(decimals: BigInt): BigInt {
+  let bd = BigInt.fromI32(1)
+  for (let i = ZERO_BI; i.lt(decimals as BigInt); i = i.plus(ONE_BI)) {
+    bd = bd.times(BigInt.fromI32(10))
   }
   return bd
 }

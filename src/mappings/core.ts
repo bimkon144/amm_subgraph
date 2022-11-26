@@ -31,7 +31,7 @@ import {
   createLiquidityPosition,
   ZERO_BD,
   BI_18,
-  createLiquiditySnapshot
+  createLiquiditySnapshot, exponentToBigDecimal, exponentToBigInt
 } from './helpers'
 
 function isCompleteMint(mintId: string): boolean {
@@ -221,6 +221,8 @@ export function handleTransfer(event: Transfer): void {
 
 export function handleSync(event: Sync): void {
   let pair = Pair.load(event.address.toHex())
+  let pairContract = PairContract.bind(event.address)
+
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
   let uniswap = UniswapFactory.load(FACTORY_ADDRESS)
@@ -235,9 +237,23 @@ export function handleSync(event: Sync): void {
   pair.reserve0 = convertTokenToDecimal(event.params.reserve0, token0.decimals)
   pair.reserve1 = convertTokenToDecimal(event.params.reserve1, token1.decimals)
 
-  if (pair.reserve1.notEqual(ZERO_BD)) pair.token0Price = pair.reserve0.div(pair.reserve1)
+  if (pair.reserve1.notEqual(ZERO_BD)) {
+    let price0 = pairContract.getAmountOut(
+        BigInt.fromI32(1).times(exponentToBigInt(token1.decimals.minus(BigInt.fromI32(2)))),
+        Address.fromString(pair.token1)
+    ).times(BigInt.fromI32(100))
+    pair.token0Price = convertTokenToDecimal(price0, token0.decimals)
+    // pair.token0Price = pair.reserve0.div(pair.reserve1)
+  }
   else pair.token0Price = ZERO_BD
-  if (pair.reserve0.notEqual(ZERO_BD)) pair.token1Price = pair.reserve1.div(pair.reserve0)
+  if (pair.reserve0.notEqual(ZERO_BD)) {
+    let price1 = pairContract.getAmountOut(
+        BigInt.fromI32(1).times(exponentToBigInt(token0.decimals.minus(BigInt.fromI32(2)))),
+        Address.fromString(pair.token0)
+    ).times(BigInt.fromI32(100))
+    pair.token1Price = convertTokenToDecimal(price1, token1.decimals)
+    // pair.token1Price = pair.reserve1.div(pair.reserve0)
+  }
   else pair.token1Price = ZERO_BD
 
   pair.save()
