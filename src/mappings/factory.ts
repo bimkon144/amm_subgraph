@@ -13,6 +13,7 @@ import {
   ZERO_BI,
   BD_PAIR_DEFAULT_FEE_AMOUNT
 } from './helpers'
+import {BigInt} from "@graphprotocol/graph-ts/index";
 
 export function handleNewPair(event: PairCreated): void {
   // load factory (create if first exchange)
@@ -106,6 +107,8 @@ export function handleNewPair(event: PairCreated): void {
   pair.untrackedVolumeUSD = ZERO_BD
   pair.token0Price = ZERO_BD
   pair.token1Price = ZERO_BD
+  pair.token0Fee = BigInt.fromI32(300)
+  pair.token1Fee = BigInt.fromI32(300)
   pair.token0FeePercent = BD_PAIR_DEFAULT_FEE_AMOUNT
   pair.token1FeePercent = BD_PAIR_DEFAULT_FEE_AMOUNT
   pair.feeUSD = ZERO_BD

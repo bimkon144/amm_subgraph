@@ -1,6 +1,6 @@
 specVersion: 0.0.2
-description: Excalibur is a decentralized protocol for automated token exchange on Ethereum.
-repository: https://github.com/ExcaliburExchange/v2-subgraph
+description: Camelot is a decentralized protocol for automated token exchange on Arbitrum.
+repository: https://github.com/CamelotLabs/v2-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
@@ -10,8 +10,8 @@ dataSources:
     source:
       address: '0x6EcCab422D763aC031210895C81787E87B43A652'
       abi: Factory
-#      startBlock: 33636404
-      startBlock: 32592094
+      startBlock: 35061163
+#      startBlock: 32592094
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -51,6 +51,8 @@ templates:
           file: ./abis/camelotpair.json
         - name: Factory
           file: ./abis/camelotfactory.json
+        - name: PriceConsumer
+          file: ./abis/priceconsumer.json
       eventHandlers:
         - event: Mint(indexed address,uint256,uint256)
           handler: handleMint

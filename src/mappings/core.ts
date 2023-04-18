@@ -33,6 +33,13 @@ import {
   BI_18,
   createLiquiditySnapshot, exponentToBigDecimal, exponentToBigInt
 } from './helpers'
+import {PriceConsumer} from "../types/templates/Pair/PriceConsumer";
+
+let BLACKLISTED_PAIRS: string[] = [
+  '0x6a78e84fa0edad4d99eb90edc041cdbf85925961', // AIDOGE/WETH
+]
+
+let priceConsumerContract = PriceConsumer.bind(Address.fromString('0x2fa124Ce75170247c77c6e59367b0d401Dd74741'))
 
 function isCompleteMint(mintId: string): boolean {
   return MintEvent.load(mintId).sender !== null // sufficient checks
@@ -55,6 +62,9 @@ export function handleTransfer(event: Transfer): void {
 
   // get pair and load contract
   let pair = Pair.load(event.address.toHexString())
+  // ##TODO: BLACKLIST PAIRS
+  if(BLACKLISTED_PAIRS.includes(pair.id)) return
+
   let pairContract = PairContract.bind(event.address)
 
   // liquidity token amount being transfered
@@ -221,6 +231,9 @@ export function handleTransfer(event: Transfer): void {
 
 export function handleSync(event: Sync): void {
   let pair = Pair.load(event.address.toHex())
+  // ##TODO: BLACKLIST PAIRS
+  if(BLACKLISTED_PAIRS.includes(pair.id)) return
+
   let pairContract = PairContract.bind(event.address)
 
   let token0 = Token.load(pair.token0)
@@ -238,19 +251,45 @@ export function handleSync(event: Sync): void {
   pair.reserve1 = convertTokenToDecimal(event.params.reserve1, token1.decimals)
 
   if (pair.reserve1.notEqual(ZERO_BD)) {
-    let price0 = pairContract.getAmountOut(
-        BigInt.fromI32(1).times(exponentToBigInt(token1.decimals.minus(BigInt.fromI32(2)))),
-        Address.fromString(pair.token1)
-    ).times(BigInt.fromI32(100))
+    let result =  priceConsumerContract.try_getAmountOut(
+        exponentToBigInt(token1.decimals.minus(BigInt.fromI32(2))),
+        Address.fromString(pair.token1),
+        event.address,
+        event.params.reserve0,
+        event.params.reserve1,
+        exponentToBigInt(token0.decimals),
+        exponentToBigInt(token1.decimals)
+    )
+    let price0: BigInt
+    if(result.reverted) {
+      price0 = pairContract.getAmountOut(
+          BigInt.fromI32(100000).plus(pair.token0Fee).times(exponentToBigInt(token1.decimals.minus(BigInt.fromI32(2)))).div(BigInt.fromI32(100000)),
+          Address.fromString(pair.token1)
+      ).times(BigInt.fromI32(100))
+    }
+    else price0 = result.value.times(BigInt.fromI32(100))
     pair.token0Price = convertTokenToDecimal(price0, token0.decimals)
     // pair.token0Price = pair.reserve0.div(pair.reserve1)
   }
   else pair.token0Price = ZERO_BD
   if (pair.reserve0.notEqual(ZERO_BD)) {
-    let price1 = pairContract.getAmountOut(
-        BigInt.fromI32(1).times(exponentToBigInt(token0.decimals.minus(BigInt.fromI32(2)))),
-        Address.fromString(pair.token0)
-    ).times(BigInt.fromI32(100))
+    let result =  priceConsumerContract.try_getAmountOut(
+        exponentToBigInt(token0.decimals.minus(BigInt.fromI32(2))),
+        Address.fromString(pair.token0),
+        event.address,
+        event.params.reserve0,
+        event.params.reserve1,
+        exponentToBigInt(token0.decimals),
+        exponentToBigInt(token1.decimals)
+    )
+    let price1: BigInt
+    if(result.reverted) {
+      price1 = pairContract.getAmountOut(
+          BigInt.fromI32(100000).plus(pair.token1Fee).times(exponentToBigInt(token0.decimals.minus(BigInt.fromI32(2)))).div(BigInt.fromI32(100000)),
+          Address.fromString(pair.token0)
+      ).times(BigInt.fromI32(100))
+    }
+    else price1 = result.value.times(BigInt.fromI32(100))
     pair.token1Price = convertTokenToDecimal(price1, token1.decimals)
     // pair.token1Price = pair.reserve1.div(pair.reserve0)
   }
@@ -326,6 +365,12 @@ export function handleMint(event: Mint): void {
     .plus(token0.derivedETH.times(token0Amount))
     .times(bundle.ethPrice)
 
+  // TODO: AMOUNT TOO LOW
+  // if(amountTotalUSD < BigDecimal.fromString('0.000004') ) {
+  //   // DO NOT MANAGE TOO LOW MINT
+  //   return
+  // }
+
   // update txn counts
   pair.txCount = pair.txCount.plus(ONE_BI)
   uniswap.txCount = uniswap.txCount.plus(ONE_BI)
@@ -367,6 +412,9 @@ export function handleBurn(event: Burn): void {
   let burn = BurnEvent.load(burns[burns.length - 1])
 
   let pair = Pair.load(event.address.toHex())
+  // ##TODO: BLACKLIST PAIRS
+  if(BLACKLISTED_PAIRS.includes(pair.id)) return
+
   let uniswap = UniswapFactory.load(FACTORY_ADDRESS)
 
   //update token info
@@ -419,6 +467,9 @@ export function handleBurn(event: Burn): void {
 
 export function handleSwap(event: Swap): void {
   let pair = Pair.load(event.address.toHexString())
+  // ##TODO: BLACKLIST PAIRS
+  if(BLACKLISTED_PAIRS.includes(pair.id)) return
+
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
   let amount0In = convertTokenToDecimal(event.params.amount0In, token0.decimals)
@@ -439,6 +490,12 @@ export function handleSwap(event: Swap): void {
     .plus(token0.derivedETH.times(amount0Total))
     .div(BigDecimal.fromString('2'))
   let derivedAmountUSD = derivedAmountETH.times(bundle.ethPrice)
+
+  // TODO: AMOUNT TOO LOW
+  // if(derivedAmountETH < BigDecimal.fromString('0.000002') ) {
+  //   // DO NOT MANAGE TOO LOW SWAP
+  //   return
+  // }
 
   // get total swap fee of derived USD and ETH for tracking
   let feeAmountETH = token1.derivedETH.times(amount1In).times(pair.token1FeePercent)
@@ -582,13 +639,19 @@ export function handleSwap(event: Swap): void {
 
 export function handleTypeSwitch(event: SetStableSwap): void {
   let pair = Pair.load(event.address.toHexString())
+  // ##TODO: BLACKLIST PAIRS
+  if(BLACKLISTED_PAIRS.includes(pair.id)) return
   pair.isStable = event.params.stableSwap
   pair.save()
 }
 
 export function handleFeePercentUpdated(event: FeePercentUpdated): void {
   let pair = Pair.load(event.address.toHexString())
+  // ##TODO: BLACKLIST PAIRS
+  if(BLACKLISTED_PAIRS.includes(pair.id)) return
 
+  pair.token0Fee = BigInt.fromI32(event.params.token0FeePercent)
+  pair.token1Fee = BigInt.fromI32(event.params.token1FeePercent)
   pair.token0FeePercent = BigInt.fromI32(event.params.token0FeePercent).toBigDecimal().div(BigDecimal.fromString('1000'))
   pair.token1FeePercent = BigInt.fromI32(event.params.token1FeePercent).toBigDecimal().div(BigDecimal.fromString('1000'))
   pair.save()
