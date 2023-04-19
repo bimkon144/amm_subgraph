@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.5
 description: Camelot is a decentralized protocol for automated token exchange on Arbitrum.
 repository: https://github.com/CamelotLabs/v2-subgraph
 schema:
@@ -11,10 +11,10 @@ dataSources:
       address: '0x6EcCab422D763aC031210895C81787E87B43A652'
       abi: Factory
       startBlock: 35061163
-#      startBlock: 32592094
+    #      startBlock: 32592094
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       file: ./src/mappings/factory.ts
       entities:
@@ -29,6 +29,12 @@ dataSources:
           file: ./abis/ERC20SymbolBytes.json
         - name: ERC20NameBytes
           file: ./abis/ERC20NameBytes.json
+        - name: Pair
+          file: ./abis/camelotpair.json
+        - name: Factory
+          file: ./abis/camelotfactory.json
+        - name: PriceConsumer
+          file: ./abis/priceconsumer.json
       eventHandlers:
         - event: PairCreated(indexed address,indexed address,address,uint256)
           handler: handleNewPair
@@ -40,7 +46,7 @@ templates:
       abi: Pair
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.3
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       file: ./src/mappings/core.ts
       entities:
@@ -68,3 +74,9 @@ templates:
           handler: handleSync
         - event: FeePercentUpdated(uint16,uint16)
           handler: handleFeePercentUpdated
+features:
+  - grafting
+graft:
+  base: QmeYzZQZtKwD7QxMxcRVgSEE9bPEP1yx8Hi8vQUZN7ep9E
+  block: 78866693
+

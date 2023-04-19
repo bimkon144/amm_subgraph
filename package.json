@@ -1,26 +1,18 @@
 {
-  "name": "camelot-subgraph",
-  "version": "1.0.0",
-  "repository": "https://github.com/CamelotLabs/v2-subgraph",
-  "license": "GPL-3.0-or-later",
+  "name": "camelot-amm-v2",
+  "license": "UNLICENSED",
   "scripts": {
-    "codegen": "graph codegen --output-dir src/types/",
+    "codegen": "graph codegen",
     "build": "graph build",
-    "create-local": "graph create camelotlocal --node http://subgraph.beta.excalibur.exchange:8020",
-    "deploy-local": "graph deploy camelotlocal --debug --ipfs http://subgraph.beta.excalibur.exchange:5001 --node http://subgraph.beta.excalibur.exchange:8020",
-    "deploy-arbitrum": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ --product hosted-service camelotlabs/camelot-amm",
-    "deploy-arbitrum-testnet": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ --product hosted-service camelotlabs/camelot-testnet-amm",
-    "deploy-staging": "graph deploy $THE_GRAPH_GITHUB_USER/$THE_GRAPH_SUBGRAPH_NAME /Uniswap --ipfs https://api.staging.thegraph.com/ipfs/ --node https://api.staging.thegraph.com/deploy/",
-    "watch-local": "graph deploy camelotlocal --watch --debug --node http://subgraph.beta.camelot.exchange:8020/ --ipfs http://subgraph.beta.excalibur.exchange:5001"
+    "deploy": "graph deploy --studio camelot-amm-v2",
+    "create-local": "graph create --node http://localhost:8020/ camelot-amm-v2",
+    "remove-local": "graph remove --node http://localhost:8020/ camelot-amm-v2",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 camelot-amm-v2",
+    "test": "graph test"
   },
-  "devDependencies": {
-    "@graphprotocol/graph-cli": "^0.16.0",
-    "@graphprotocol/graph-ts": "^0.16.0",
-    "@typescript-eslint/eslint-plugin": "^2.0.0",
-    "@typescript-eslint/parser": "^2.0.0",
-    "eslint": "^6.2.2",
-    "eslint-config-prettier": "^6.1.0",
-    "prettier": "^1.18.2",
-    "typescript": "^3.5.2"
-  }
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.46.1",
+    "@graphprotocol/graph-ts": "0.29.1"
+  },
+  "devDependencies": { "matchstick-as": "0.5.0" }
 }

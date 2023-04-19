@@ -1,19 +1,23 @@
 /* eslint-disable prefer-const */
-import { log } from '@graphprotocol/graph-ts'
-import { PairCreated } from '../types/Factory/Factory'
-import { Bundle, Pair, Token, UniswapFactory } from '../types/schema'
-import { Pair as PairTemplate } from '../types/templates'
+import {BigDecimal, log} from '@graphprotocol/graph-ts'
+import { PairCreated } from '../../generated/Factory/Factory'
+import { Bundle, Pair, Token, UniswapFactory } from '../../generated/schema'
+import { Pair as PairTemplate } from '../../generated/templates'
 import {
   FACTORY_ADDRESS,
   fetchTokenDecimals,
   fetchTokenName,
   fetchTokenSymbol,
-  fetchTokenTotalSupply,
+  // fetchTokenTotalSupply,
   ZERO_BD,
   ZERO_BI,
   BD_PAIR_DEFAULT_FEE_AMOUNT
 } from './helpers'
 import {BigInt} from "@graphprotocol/graph-ts/index";
+
+let BLACKLISTED_PAIRS: string[] = [
+  '0x6a78e84fa0edad4d99eb90edc041cdbf85925961', // AIDOGE/WETH
+]
 
 export function handleNewPair(event: PairCreated): void {
   // load factory (create if first exchange)
@@ -47,7 +51,7 @@ export function handleNewPair(event: PairCreated): void {
     token0 = new Token(event.params.token0.toHexString())
     token0.symbol = fetchTokenSymbol(event.params.token0)
     token0.name = fetchTokenName(event.params.token0)
-    token0.totalSupply = fetchTokenTotalSupply(event.params.token0)
+    token0.totalSupply = ZERO_BI
     let decimals = fetchTokenDecimals(event.params.token0)
 
     // bail if we couldn't figure out the decimals
@@ -71,7 +75,7 @@ export function handleNewPair(event: PairCreated): void {
     token1 = new Token(event.params.token1.toHexString())
     token1.symbol = fetchTokenSymbol(event.params.token1)
     token1.name = fetchTokenName(event.params.token1)
-    token1.totalSupply = fetchTokenTotalSupply(event.params.token1)
+    token1.totalSupply = ZERO_BI
     let decimals = fetchTokenDecimals(event.params.token1)
 
     // bail if we couldn't figure out the decimals
@@ -114,8 +118,10 @@ export function handleNewPair(event: PairCreated): void {
   pair.feeUSD = ZERO_BD
   pair.isStable = false
 
-  // create the tracked contract based on the template
-  PairTemplate.create(event.params.pair)
+  if(!(BLACKLISTED_PAIRS.includes(event.params.pair.toHex()))) {
+    // create the tracked contract based on the template
+    PairTemplate.create(event.params.pair)
+  }
 
   // save updated values
   token0.save()
