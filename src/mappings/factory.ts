@@ -16,7 +16,7 @@ import {
 import {BigInt} from "@graphprotocol/graph-ts/index";
 
 let BLACKLISTED_PAIRS: string[] = [
-  '0x6a78e84fa0edad4d99eb90edc041cdbf85925961', // AIDOGE/WETH
+  // '0x6a78e84fa0edad4d99eb90edc041cdbf85925961', // AIDOGE/WETH
 ]
 
 export function handleNewPair(event: PairCreated): void {
@@ -66,7 +66,7 @@ export function handleNewPair(event: PairCreated): void {
     token0.tradeVolumeUSD = ZERO_BD
     token0.untrackedVolumeUSD = ZERO_BD
     token0.totalLiquidity = ZERO_BD
-    // token0.allPairs = []
+    token0.allPairs = []
     token0.txCount = ZERO_BI
   }
 
@@ -88,7 +88,7 @@ export function handleNewPair(event: PairCreated): void {
     token1.tradeVolumeUSD = ZERO_BD
     token1.untrackedVolumeUSD = ZERO_BD
     token1.totalLiquidity = ZERO_BD
-    // token1.allPairs = []
+    token1.allPairs = []
     token1.txCount = ZERO_BI
   }
 
@@ -123,12 +123,12 @@ export function handleNewPair(event: PairCreated): void {
     PairTemplate.create(event.params.pair)
   }
 
-  // const token0AllPairs = token0.allPairs
-  // const token1AllPairs = token1.allPairs
-  // token0AllPairs.push(pair.id)
-  // token1AllPairs.push(pair.id)
-  // token0.allPairs = token0AllPairs
-  // token1.allPairs = token1AllPairs
+  const token0AllPairs = token0.allPairs
+  const token1AllPairs = token1.allPairs
+  token0AllPairs.push(pair.id)
+  token1AllPairs.push(pair.id)
+  token0.allPairs = token0AllPairs
+  token1.allPairs = token1AllPairs
 
   // save updated values
   token0.save()

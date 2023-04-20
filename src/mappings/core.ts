@@ -21,7 +21,13 @@ import {
   SetStableSwap
 } from '../../generated/templates/Pair/Pair'
 import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData } from './dayUpdates'
-import { getEthPriceInUSD, findEthPerToken, getTrackedVolumeUSD, getTrackedLiquidityUSD } from './pricing'
+import {
+  getEthPriceInUSD,
+  findEthPerToken,
+  getTrackedVolumeUSD,
+  getTrackedLiquidityUSD,
+  findEthPerTokenWithoutCall
+} from './pricing'
 import {
   convertTokenToDecimal,
   ADDRESS_ZERO,
@@ -303,8 +309,8 @@ export function handleSync(event: Sync): void {
   bundle.ethPrice = getEthPriceInUSD()
   bundle.save()
 
-  token0.derivedETH = findEthPerToken(token0 as Token)
-  token1.derivedETH = findEthPerToken(token1 as Token)
+  token0.derivedETH = findEthPerTokenWithoutCall(token0 as Token)
+  token1.derivedETH = findEthPerTokenWithoutCall(token1 as Token)
   token0.save()
   token1.save()
 

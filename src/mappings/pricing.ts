@@ -71,41 +71,45 @@ export function findEthPerToken(token: Token): BigDecimal {
         lastPairReserveETH = pair.reserveETH
         price = pair.token0Price.times(token0.derivedETH as BigDecimal) // return token0 per our token * ETH per token 0
       }
+
+      if(lastPairReserveETH.ge(MINIMUM_LIQUIDITY_ETH)) {
+        return price
+      }
     }
   }
   return price // nothing was found return 0
 }
 
-// export function findEthPerTokenWithoutCall(token: Token): BigDecimal {
-//   if (token.id == WETH_ADDRESS) {
-//     return ONE_BD
-//   }
-//
-//   let price = ZERO_BD
-//   let lastPairReserveETH = MINIMUM_LIQUIDITY_THRESHOLD_ETH
-//
-//   for (let i = 0; i < token.allPairs.length; ++i) {
-//     let pairAddress = token.allPairs[i]
-//     let pair = Pair.load(pairAddress)
-//     if(!pair) continue // should never happen
-//     if(
-//         (pair.token0 == token.id && WHITELIST.includes(pair.token1)) ||
-//         (pair.token1 == token.id && WHITELIST.includes(pair.token0)))
-//     {
-//       if (pair.token0 == token.id && pair.reserveETH.gt(lastPairReserveETH)) {
-//         let token1 = Token.load(pair.token1) as Token
-//         lastPairReserveETH = pair.reserveETH
-//         price = pair.token1Price.times(token1.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
-//       }
-//       if (pair.token1 == token.id && pair.reserveETH.gt(lastPairReserveETH)) {
-//         let token0 = Token.load(pair.token0) as Token
-//         lastPairReserveETH = pair.reserveETH
-//         price = pair.token0Price.times(token0.derivedETH as BigDecimal) // return token0 per our token * ETH per token 0
-//       }
-//     }
-//   }
-//   return price
-// }
+export function findEthPerTokenWithoutCall(token: Token): BigDecimal {
+  if (token.id == WETH_ADDRESS) {
+    return ONE_BD
+  }
+
+  let price = ZERO_BD
+  let lastPairReserveETH = MINIMUM_LIQUIDITY_THRESHOLD_ETH
+
+  for (let i = 0; i < token.allPairs.length; ++i) {
+    let pairAddress = token.allPairs[i]
+    let pair = Pair.load(pairAddress)
+    if(!pair) continue // should never happen
+    if(
+        (pair.token0 == token.id && WHITELIST.includes(pair.token1)) ||
+        (pair.token1 == token.id && WHITELIST.includes(pair.token0)))
+    {
+      if (pair.token0 == token.id && pair.reserveETH.gt(lastPairReserveETH)) {
+        let token1 = Token.load(pair.token1) as Token
+        lastPairReserveETH = pair.reserveETH
+        price = pair.token1Price.times(token1.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
+      }
+      if (pair.token1 == token.id && pair.reserveETH.gt(lastPairReserveETH)) {
+        let token0 = Token.load(pair.token0) as Token
+        lastPairReserveETH = pair.reserveETH
+        price = pair.token0Price.times(token0.derivedETH as BigDecimal) // return token0 per our token * ETH per token 0
+      }
+    }
+  }
+  return price
+}
 
 /**
  * Accepts tokens and amounts, return tracked amount based on token whitelist
