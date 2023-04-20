@@ -11,7 +11,6 @@ dataSources:
       address: '0x6EcCab422D763aC031210895C81787E87B43A652'
       abi: Factory
       startBlock: 35061163
-    #      startBlock: 32592094
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -77,6 +76,9 @@ templates:
 features:
   - grafting
 graft:
-  base: QmeYzZQZtKwD7QxMxcRVgSEE9bPEP1yx8Hi8vQUZN7ep9E
-  block: 78866693
+  base: QmSiUTaRLe3DMMVsarH4Q368L9MSu3yQyPnVho6L1WAibX
+  block: 80116858
+#  BASE 1 before ARBDOGE/WETH
+#  base: QmeYzZQZtKwD7QxMxcRVgSEE9bPEP1yx8Hi8vQUZN7ep9E
+#  block: 78866693
 

@@ -54,6 +54,7 @@ type Token @entity {
   tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
   pairDayDataBase: [PairDayData!]! @derivedFrom(field: "token0")
   pairDayDataQuote: [PairDayData!]! @derivedFrom(field: "token1")
+  allPairs: [Pair!]!
   pairBase: [Pair!]! @derivedFrom(field: "token0")
   pairQuote: [Pair!]! @derivedFrom(field: "token1")
 }

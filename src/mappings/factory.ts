@@ -123,6 +123,13 @@ export function handleNewPair(event: PairCreated): void {
     PairTemplate.create(event.params.pair)
   }
 
+  // const token0AllPairs = token0.allPairs
+  // const token1AllPairs = token1.allPairs
+  // token0AllPairs.push(pair.id)
+  // token1AllPairs.push(pair.id)
+  // token0.allPairs = token0AllPairs
+  // token1.allPairs = token1AllPairs
+
   // save updated values
   token0.save()
   token1.save()
