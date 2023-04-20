@@ -506,7 +506,7 @@ export function handleSwap(event: Swap): void {
 
   // get total swap fee of derived USD and ETH for tracking
   let feeAmountETH = (token1.derivedETH as BigDecimal).times(amount1In).times(pair.token1FeePercent)
-      .plus((token1.derivedETH as BigDecimal).times(amount0In).times(pair.token0FeePercent)).div(BigDecimal.fromString('100'))
+      .plus((token0.derivedETH as BigDecimal).times(amount0In).times(pair.token0FeePercent)).div(BigDecimal.fromString('100'))
   let feeAmountUSD = feeAmountETH.times(bundle.ethPrice)
 
   // only accounts for volume through white listed tokens
