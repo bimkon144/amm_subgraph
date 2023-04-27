@@ -421,10 +421,12 @@ export function handleBurn(event: Burn): void {
   }
 
   let burns = transaction.burns
-  let burn = BurnEvent.load(burns[burns.length - 1]) as BurnEvent
+  let burn = BurnEvent.load(burns[burns.length - 1])
+  if(!burn) return
 
   let bundle = Bundle.load('1') as Bundle
-  let pair = Pair.load(event.address.toHexString()) as Pair
+  let pair = Pair.load(event.address.toHexString())
+  if(!pair) return
 
   let uniswap = UniswapFactory.load(FACTORY_ADDRESS) as UniswapFactory
 
@@ -455,7 +457,7 @@ export function handleBurn(event: Burn): void {
   uniswap.save()
 
   // update burn
-  // burn.sender = event.params.sender
+  if(!burn.sender) burn.sender = event.params.sender
   burn.amount0 = token0Amount as BigDecimal
   burn.amount1 = token1Amount as BigDecimal
   // burn.to = event.params.to

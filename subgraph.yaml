@@ -73,11 +73,11 @@ templates:
           handler: handleSync
         - event: FeePercentUpdated(uint16,uint16)
           handler: handleFeePercentUpdated
-#features:
-#  - grafting
-#graft:
-#  base: QmSiUTaRLe3DMMVsarH4Q368L9MSu3yQyPnVho6L1WAibX
-#  block: 80116858
+features:
+  - grafting
+graft:
+  base: QmUtGm33GnY6hvnBnAJs8N78Vo7k11ZPctNU8cu7RbNfsp
+  block: 84695232
 #  BASE 1 before ARBDOGE/WETH
 #  base: QmeYzZQZtKwD7QxMxcRVgSEE9bPEP1yx8Hi8vQUZN7ep9E
 #  block: 78866693
