@@ -23,7 +23,8 @@ export function getEthPriceInUSD(): BigDecimal {
 let WHITELIST: string[] = [
 // TODO: update address
   '0x82af49447d8a07e3bd95bd0d56f35241523fbab1', // WETH
-  '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', // USDC
+  '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', // USDC.e
+  '0xaf88d065e77c8cc2239327c5edb3a432268e5831', // USDC
   '0x912ce59144191c1204e64559fe8253a0e49e6548', // ARB
   '0xd74f5255d557944cf7dd0e45ff521520002d5748', // USDs
   '0x1622bf67e6e5747b81866fe0b85178a93c7f86e3', // UMAMI
@@ -33,6 +34,8 @@ let WHITELIST: string[] = [
   '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', // USDT
   '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', // DAI
 ]
+
+let STABLE = '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8'
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
 let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('500')
@@ -87,6 +90,16 @@ export function findEthPerTokenWithoutCall(token: Token): BigDecimal {
 
   let price = ZERO_BD
   let lastPairReserveETH = MINIMUM_LIQUIDITY_THRESHOLD_ETH
+
+
+  if(token.id == STABLE) {
+    let pair =  Pair.load(USDC_WETH_PAIR)
+    if(pair) {
+      let token0 = Token.load(pair.token0) as Token
+      price = pair.token0Price.times(token0.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
+      return price
+    }
+  }
 
   for (let i = 0; i < token.allPairs.length; ++i) {
     let pairAddress = token.allPairs[i]
