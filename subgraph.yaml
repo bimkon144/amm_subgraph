@@ -6,9 +6,9 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: arbitrum-one
+    network: arbitrum-sepolia
     source:
-      address: '0x6EcCab422D763aC031210895C81787E87B43A652'
+      address: '0x18E621B64d7808c3C47bccbbD7485d23F257D26f'
       abi: Factory
       startBlock: 35061163
     mapping:
@@ -40,7 +40,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pair
-    network: arbitrum-one
+    network: arbitrum-sepolia
     source:
       abi: Pair
     mapping:
@@ -73,12 +73,4 @@ templates:
           handler: handleSync
         - event: FeePercentUpdated(uint16,uint16)
           handler: handleFeePercentUpdated
-features:
-  - grafting
-graft:
-  base: QmUtGm33GnY6hvnBnAJs8N78Vo7k11ZPctNU8cu7RbNfsp
-  block: 84695232
-#  BASE 1 before ARBDOGE/WETH
-#  base: QmeYzZQZtKwD7QxMxcRVgSEE9bPEP1yx8Hi8vQUZN7ep9E
-#  block: 78866693
 
