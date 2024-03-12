@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: arbitrum-one
+    network: scrollAlpha
     source:
-      address: '0x6EcCab422D763aC031210895C81787E87B43A652'
+      address: '0x7422ab95742858e21b9f6299ff66b24fb2a478fd'
       abi: Factory
-      startBlock: 35061163
+      startBlock: 3246192
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -40,7 +40,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pair
-    network: arbitrum-one
+    network: scrollAlpha
     source:
       abi: Pair
     mapping:
@@ -73,12 +73,4 @@ templates:
           handler: handleSync
         - event: FeePercentUpdated(uint16,uint16)
           handler: handleFeePercentUpdated
-features:
-  - grafting
-graft:
-  base: QmUtGm33GnY6hvnBnAJs8N78Vo7k11ZPctNU8cu7RbNfsp
-  block: 84695232
-#  BASE 1 before ARBDOGE/WETH
-#  base: QmeYzZQZtKwD7QxMxcRVgSEE9bPEP1yx8Hi8vQUZN7ep9E
-#  block: 78866693
 
