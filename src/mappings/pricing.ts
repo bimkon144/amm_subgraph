@@ -5,46 +5,50 @@ import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, UNTRACKED_PAIRS } from 
 import {log} from "@graphprotocol/graph-ts";
 
 // TODO: update address
-const WETH_ADDRESS = '0x82af49447d8a07e3bd95bd0d56f35241523fbab1'
-const USDC_WETH_PAIR = '0x84652bb2539513baf36e225c930fdd8eaa63ce27'
+const WETH_ADDRESS = '0x8f7bda6286a9eeb70a74a9b0321bbdd1861bedfb'
+const USDT_WETH_PAIR = '0xf685dd2e0a77a1455b61df91241949e24646e69a'
+const USDС_WETH_PAIR = '0xbed1ed3d8df7f0aa9062945b6d3874976c769fc6'
+const DAI_WETH_PAIR = '0x39ad59c726ccb0b47fbf0d1ed60f94b9bce96ebe'
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
-  let usdcPair = Pair.load(USDC_WETH_PAIR) // usdc is token0
+  let usdtPair = Pair.load(USDT_WETH_PAIR) // usdt is token0
 
-  if (usdcPair !== null) {
-    return usdcPair.token1Price
+  if (usdtPair !== null) {
+    log.info('USDT PAIR NOT NULL: {}', [USDT_WETH_PAIR]);
+    return usdtPair.token1Price
   } else {
-    return ZERO_BD
+    log.info('USDT PAIR NULL: {}', [USDT_WETH_PAIR]);
+    return BigDecimal.fromString('51')
   }
 }
 
 // token where amounts should contribute to tracked volume and liquidity
 let WHITELIST: string[] = [
 // TODO: update address
-  '0x82af49447d8a07e3bd95bd0d56f35241523fbab1', // WETH
-  '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', // USDC.e
-  '0xaf88d065e77c8cc2239327c5edb3a432268e5831', // USDC
-  '0x912ce59144191c1204e64559fe8253a0e49e6548', // ARB
-  '0xd74f5255d557944cf7dd0e45ff521520002d5748', // USDs
-  '0x1622bf67e6e5747b81866fe0b85178a93c7f86e3', // UMAMI
-  '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55', // DPX
-  '0x5979d7b546e38e414f7e9822514be443a4800529', // wstETH
-  '0x6cda1d3d092811b2d48f7476adb59a6239ca9b95', // stafi-rETH
-  '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', // USDT
-  '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', // DAI
+  '0x8f7bda6286a9eeb70a74a9b0321bbdd1861bedfb', // WETH
+  '0x9ca63241c2ec31f0c40d1372d4236172c5499a1f', // WBTC
+  '0x62e783a3d22fb66ef6868501d399c9644d421930', // DAI
+  '0xd6c40f45a617be25d2847f83a422aa82d2077350', // USDC
+  '0xb5e18d66f2f0a1e7b8eb51e48b57b2d1ba707e91', // USDT
+  '0xad0cfd3e2d2bf143bc5266ee1f4a7505f5750143', // ARB
+  '0xf9ce31898b8b2ca44de016fed5bf90adc43311b9', // OP
+  '0x63aef2806936fe54240fca6370c2b0ebc11951d2', // DOGE
+  '0xa724685f1a9f46e44e1f873b60e59ffbf83063fa', // PEPE
 ]
 
-let STABLE = '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8'
+let STABLE = '0xb5e18d66f2f0a1e7b8eb51e48b57b2d1ba707e91'
+let STABLE_USDC = '0xd6c40f45a617be25d2847f83a422aa82d2077350'
+let STABLE_DAI = '0x62e783a3d22fb66ef6868501d399c9644d421930'
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
-let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('500')
+let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('10')
 
 // minimum liquidity for price to get trackedc
-let MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString('0.5')
+let MINIMUM_LIQUIDITY_THRESHOLD_ETH = BigDecimal.fromString('0.1')
 
 // minimum liquidity to stop trying to get biggest pair
-let MINIMUM_LIQUIDITY_ETH = BigDecimal.fromString('50')
+let MINIMUM_LIQUIDITY_ETH = BigDecimal.fromString('0.1')
 
 /**
  * Search through graph to find derived Eth per token.
@@ -93,8 +97,29 @@ export function findEthPerTokenWithoutCall(token: Token): BigDecimal {
 
 
   if(token.id == STABLE) {
-    let pair =  Pair.load(USDC_WETH_PAIR)
+    let pair =  Pair.load(USDT_WETH_PAIR)
+ 
     if(pair) {
+      let token0 = Token.load(pair.token0) as Token
+      price = pair.token0Price.times(token0.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
+      return price
+    }
+  }
+
+  if (token.id == STABLE_USDC) {
+    let pair =  Pair.load(USDС_WETH_PAIR)
+ 
+    if(pair) {
+      let token0 = Token.load(pair.token0) as Token
+      price = pair.token0Price.times(token0.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
+      return price
+    }
+  }
+  if (token.id == STABLE_DAI) {
+    let pair =  Pair.load(DAI_WETH_PAIR)
+    log.info('DAI PAIR ENTERED but not exist: {}', ['pair']);
+    if(pair) {
+      log.info('DAI PAIR ENTERED: {}', [pair.id]);
       let token0 = Token.load(pair.token0) as Token
       price = pair.token0Price.times(token0.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
       return price
@@ -106,18 +131,24 @@ export function findEthPerTokenWithoutCall(token: Token): BigDecimal {
     let pair = Pair.load(pairAddress)
     if(!pair) continue // should never happen
     if(
-        (pair.token0 == token.id && WHITELIST.includes(pair.token1)) ||
-        (pair.token1 == token.id && WHITELIST.includes(pair.token0)))
+        (pair.token0 == token.id && pair.token1 == WETH_ADDRESS) ||
+        (pair.token1 == token.id && pair.token0 == WETH_ADDRESS))
     {
-      if (pair.token0 == token.id && pair.reserveETH.gt(lastPairReserveETH)) {
-        let token1 = Token.load(pair.token1) as Token
-        lastPairReserveETH = pair.reserveETH
-        price = pair.token1Price.times(token1.derivedETH as BigDecimal) // return token1 per our token * Eth per token 1
+      log.info('Message to be displayed: {}, {}, {}', [token.id, pair.token0, pair.token1])
+      log.info('Message to be displayed: {}, {}, {}', [(pair.reserveETH).toString(), (lastPairReserveETH).toString(), (pair.token0 == token.id).toString()])
+      if (pair.token0 == token.id) {
+        log.info('Message Inside0: {}, {}, {}', [token.id, pair.token0, pair.token1])
+        log.info('Pair.token0-reserveETH: {}', [(pair.reserveETH).toString()]);
+        log.info('Pair.token0-LastPairReverveETH: {}', [(lastPairReserveETH).toString()]);
+  
+        price = pair.token1Price // return token1 per our token * Eth per token 1
       }
-      if (pair.token1 == token.id && pair.reserveETH.gt(lastPairReserveETH)) {
-        let token0 = Token.load(pair.token0) as Token
-        lastPairReserveETH = pair.reserveETH
-        price = pair.token0Price.times(token0.derivedETH as BigDecimal) // return token0 per our token * ETH per token 0
+      if (pair.token1 == token.id) {
+        log.info('Message Inside1: {}, {}, {}', [token.id, pair.token0, pair.token1])
+        log.info('Pair.token1-reserveETH: {}', [(pair.reserveETH).toString()]);
+        log.info('Pair.token1-LastPairReverveETH: {}', [(lastPairReserveETH).toString()]);
+
+        price = pair.token0Price // return token0 per our token * ETH per token 0
       }
     }
   }

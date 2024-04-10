@@ -93,6 +93,7 @@ export function handleNewPair(event: PairCreated): void {
   }
 
   let pair = new Pair(event.params.pair.toHexString()) as Pair
+  log.info('NEW PAIR IS: {}', [pair.id]);
   pair.token0 = token0.id
   pair.token1 = token1.id
   pair.liquidityProviderCount = ZERO_BI

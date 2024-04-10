@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: scrollAlpha
+    network: scroll-sepolia
     source:
-      address: '0x7422ab95742858e21b9f6299ff66b24fb2a478fd'
+      address: '0xa17fb4966ffc5da6c7b87d795df240ec6556e6ee'
       abi: Factory
-      startBlock: 3246192
+      startBlock: 3435412
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -40,7 +40,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pair
-    network: scrollAlpha
+    network: scroll-sepolia
     source:
       abi: Pair
     mapping:
